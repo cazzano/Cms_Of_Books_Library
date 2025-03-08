@@ -308,7 +308,7 @@ export default {
     async fetchBooks() {
       try {
         this.loading = true
-        const response = await fetch('http://localhost:5000/books')
+        const response = await fetch('https://bookslibrarybackend-production.up.railway.app/books')
         
         if (!response.ok) {
           throw new Error(`Failed to fetch books: ${response.status} ${response.statusText}`)
@@ -370,7 +370,7 @@ export default {
       
       this.addingIds.push(bookId)
       try {
-        const response = await fetch(`http://localhost:5000/books/static/add/${bookId}`, {
+        const response = await fetch(`https://bookslibrarybackend-production.up.railway.app/books/static/add/${bookId}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -422,7 +422,7 @@ export default {
       
       this.updating = true
       try {
-        const response = await fetch(`http://localhost:5000/books/static/update/${this.updateData.bookId}`, {
+        const response = await fetch(`https://bookslibrarybackend-production.up.railway.app/books/static/update/${this.updateData.bookId}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
@@ -463,7 +463,7 @@ export default {
       
       this.deletingIds.push(bookId)
       try {
-        const response = await fetch(`http://localhost:5000/books/static/delete/${bookId}`, {
+        const response = await fetch(`https://bookslibrarybackend-production.up.railway.app/books/static/delete/${bookId}`, {
           method: 'DELETE'
         })
         

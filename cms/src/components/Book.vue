@@ -375,7 +375,7 @@ export default {
       this.error = null;
       
       try {
-        const response = await axios.get('http://localhost:5000/books');
+        const response = await axios.get('https://bookslibrarybackend-production.up.railway.app/books');
         this.books = response.data;
       } catch (error) {
         console.error('Error fetching books:', error);
@@ -449,7 +449,7 @@ export default {
           books_id: this.getNextBookId()
         };
         
-        await axios.post('http://localhost:5000/books/add', bookToAdd);
+        await axios.post('https://bookslibrarybackend-production.up.railway.app/books/add', bookToAdd);
         this.closeAddModal();
         await this.fetchBooks(); // Refresh book list
         
@@ -480,7 +480,7 @@ export default {
           description: this.editingBook.description
         };
         
-        await axios.put(`http://localhost:5000/books/update/${bookId}`, updateData);
+        await axios.put(`https://bookslibrarybackend-production.up.railway.app/books/update/${bookId}`, updateData);
         this.closeEditModal();
         await this.fetchBooks(); // Refresh book list
         
@@ -506,7 +506,7 @@ export default {
       }
       
       try {
-        await axios.delete(`http://localhost:5000/books/delete/${bookId}`);
+        await axios.delete(`https://bookslibrarybackend-production.up.railway.app/books/delete/${bookId}`);
         await this.fetchBooks(); // Refresh book list
         
         if (typeof this.$toast !== 'undefined') {
