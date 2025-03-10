@@ -6,6 +6,7 @@ import Static from "./components/Static.vue";
 import UploadPic from "./components/UploadPic.vue";
 import UploadDn from "./components/UploadDn.vue";
 import File_Server from "./components/File_Server.vue";
+import Database from "./components/Database.vue";
 
 const routes = [
   { path: "/", component: Home },
@@ -15,6 +16,7 @@ const routes = [
   { path: "/pictures", component: UploadPic },
   { path: "/documents", component: UploadDn },
   { path: "/file_server", component: File_Server },
+  { path: "/database", component: Database },
 ];
 
 const router = createRouter({
