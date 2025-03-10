@@ -178,7 +178,7 @@
     <!-- Upload modal -->
     <div class="modal" :class="{ 'modal-open': selectedBook !== null }">
       <div class="modal-box">
-        <h3 class="font-bold text-lg text-primary">Upload Picture for "{{ selectedBook?.name }}"</h3>
+        <h3 class="font-bold text-lg text-primary">Upload Document for "{{ selectedBook?.name }}"</h3>
         
         <div class="py-4">
           <div v-if="uploadSuccess" class="alert alert-success mb-4">
@@ -197,7 +197,7 @@
             </label>
             <input 
               type="file" 
-              accept="image/*" 
+              accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" 
               class="file-input file-input-bordered file-input-primary w-full" 
               @change="handleFileChange"
               ref="fileInput"
@@ -210,8 +210,16 @@
               <p class="text-sm">{{ selectedFile.name }}</p>
             </div>
             
-            <div v-if="filePreview" class="mt-4 flex justify-center">
+            <div v-if="filePreview && isImageFile" class="mt-4 flex justify-center">
               <img :src="filePreview" alt="Preview" class="max-h-40 rounded-lg" />
+            </div>
+            <div v-else-if="selectedFile" class="mt-4 flex justify-center">
+              <div class="p-4 border rounded-lg flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <span>{{ selectedFile.name }}</span>
+              </div>
             </div>
           </div>
 
@@ -225,7 +233,7 @@
           <button 
             class="btn btn-primary" 
             :disabled="!selectedFile || uploading" 
-            @click="uploadPicture"
+            @click="uploadDocument"
           >
             <span v-if="uploading" class="loading loading-spinner loading-sm"></span>
             {{ isUpdateMode ? 'Update Document' : 'Upload Document' }}
@@ -237,7 +245,7 @@
     <!-- Delete modal -->
     <div class="modal" :class="{ 'modal-open': deleteModalOpen }">
       <div class="modal-box">
-        <h3 class="font-bold text-lg text-error">Delete Picture</h3>
+        <h3 class="font-bold text-lg text-error">Delete Document</h3>
         
         <div class="py-4">
           <div v-if="deleteSuccess" class="alert alert-success mb-4">
@@ -295,6 +303,7 @@ export default {
       uploadSuccess: false,
       uploadError: null,
       isUpdateMode: false,
+      isImageFile: false,
       
       // Delete functionality
       deleteModalOpen: false,
@@ -456,6 +465,7 @@ export default {
       this.uploadSuccess = false
       this.uploadError = null
       this.isUpdateMode = false
+      this.isImageFile = false
       
       // Reset file input
       if (this.$refs.fileInput) {
@@ -473,6 +483,7 @@ export default {
       this.selectedFile = null
       this.filePreview = null
       this.isUpdateMode = false
+      this.isImageFile = false
     },
     
     handleFileChange(event) {
@@ -484,15 +495,22 @@ export default {
       this.uploadSuccess = false
       this.uploadError = null
       
-      // Create preview
-      const reader = new FileReader()
-      reader.onload = e => {
-        this.filePreview = e.target.result
+      // Check if file is an image to show preview
+      this.isImageFile = file.type.startsWith('image/')
+      
+      // Create preview only for image files
+      if (this.isImageFile) {
+        const reader = new FileReader()
+        reader.onload = e => {
+          this.filePreview = e.target.result
+        }
+        reader.readAsDataURL(file)
+      } else {
+        this.filePreview = null
       }
-      reader.readAsDataURL(file)
     },
     
-    async uploadPicture() {
+    async uploadDocument() {
       if (!this.selectedFile || !this.selectedBook) return
       
       this.uploading = true
@@ -528,8 +546,8 @@ export default {
           this.closeModal()
         }, 1500)
       } catch (err) {
-        console.error(`Error ${this.isUpdateMode ? 'updating' : 'uploading'} picture:`, err)
-        this.uploadError = `Failed to ${this.isUpdateMode ? 'update' : 'upload'} picture. Please try again.`
+        console.error(`Error ${this.isUpdateMode ? 'updating' : 'uploading'} document:`, err)
+        this.uploadError = `Failed to ${this.isUpdateMode ? 'update' : 'upload'} document. Please try again.`
       } finally {
         this.uploading = false
       }
@@ -576,8 +594,8 @@ export default {
           }
         }, 1500)
       } catch (err) {
-        console.error('Error deleting picture:', err)
-        this.deleteError = 'Failed to delete picture. Please try again.'
+        console.error('Error deleting document:', err)
+        this.deleteError = 'Failed to delete document. Please try again.'
       } finally {
         this.deleting = false
       }
